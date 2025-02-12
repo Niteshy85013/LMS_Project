@@ -89,62 +89,133 @@ router.delete('/:id', async (req, res) => {
   }
 });
 
+// Borrow Book
+import jwt from "jsonwebtoken";
 
-// Borrow a Book
-router.post("/books/borrow/:id", authenticateJWT, async (req, res) => {
-  const { id } = req.params;
-  const userId = req.user.id;
+router.post("/borrow", async (req, res) => {
   try {
-    // Check if the book is available
-    const book = await pool.query("SELECT * FROM books WHERE id = $1", [id]);
-    if (book.rows.length === 0) {
-      return res.status(404).json({ error: "Book not found" });
+    // Extract token from headers
+    const token = req.headers.authorization?.split(" ")[1];
+
+    if (!token) {
+      return res.status(401).json({ error: "Unauthorized: No token provided" });
     }
-    if (book.rows[0].quantity <= 0) {
-      return res.status(400).json({ error: "Book is out of stock" });
+
+    // Decode user ID from token
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const user_id = decoded.id; // Ensure 'id' exists in your token payload
+    const { book_id } = req.body;
+
+    if (!book_id) {
+      return res.status(400).json({ error: "Book ID is required" });
     }
-    // Decrease the book quantity
-    await pool.query("UPDATE books SET quantity = quantity - 1 WHERE id = $1", [id]);
-    // Add to borrowed books
+
+    // Begin transaction
+    await pool.query("BEGIN");
+
+    // Check if book is available
+    const bookData = await pool.query("SELECT quantity FROM books WHERE id = $1", [book_id]);
+
+    if (bookData.rowCount === 0 || bookData.rows[0].quantity <= 0) {
+      await pool.query("ROLLBACK");
+      return res.status(400).json({ error: "Book not available" });
+    }
+
+    // Reduce book quantity by 1
+    await pool.query("UPDATE books SET quantity = quantity - 1 WHERE id = $1", [book_id]);
+
+    // Insert into borrowed_books
     await pool.query(
-      "INSERT INTO borrowed_books (user_id, book_id) VALUES ($1, $2)",
-      [userId, id]
+      "INSERT INTO borrowed_books (user_id, book_id, borrowed_at) VALUES ($1, $2, NOW())",
+      [user_id, book_id]
     );
 
-    res.status(200).json({ message: "Book borrowed successfully" });
-  } catch (err) {
-    console.error(err);
+    // Commit transaction
+    await pool.query("COMMIT");
+
+    res.json({ message: "Book borrowed successfully" });
+  } catch (error) {
+    await pool.query("ROLLBACK");
+    console.error("Error borrowing book:", error);
     res.status(500).json({ error: "Internal Server Error" });
   }
 });
 
-// Return a Book
-router.post("/books/return/:id", authenticateJWT, async (req, res) => {
-  const { id } = req.params;
-  const userId = req.user.id;
+
+// Return Book
+// router.post("/return", async (req, res) => {
+//   const { user_id, book_id } = req.body;
+
+//   await pool.query("UPDATE books SET quantity = quantity + 1 WHERE id = $1", [book_id]);
+//   await pool.query("DELETE FROM borrowed_books WHERE user_id = $1 AND book_id = $2", [user_id, book_id]);
+
+//   res.json({ message: "Book returned successfully" });
+// });
+
+router.post("/return", async (req, res) => {
+  const { user_id, book_id } = req.body;
+
+  // Validate required inputs
+  if (!user_id || !book_id) {
+    return res.status(400).json({ error: "Missing user_id or book_id" });
+  }
 
   try {
-    // Check if the book exists
-    const book = await pool.query("SELECT * FROM books WHERE id = $1", [id]);
-    if (book.rows.length === 0) {
+    // Start transaction
+    await pool.query("BEGIN");
+
+    // Fetch current quantity and total quantity from books table
+    const bookData = await pool.query(
+      "SELECT quantity, total_quantity FROM books WHERE id = $1",
+      [book_id]
+    );
+
+    if (bookData.rowCount === 0) {
+      await pool.query("ROLLBACK");
       return res.status(404).json({ error: "Book not found" });
     }
 
-    // Increase the book quantity
-    await pool.query("UPDATE books SET quantity = quantity + 1 WHERE id = $1", [id]);
+    const { quantity, total_quantity } = bookData.rows[0];
 
-    // Remove from borrowed books
+    // Check if the user actually borrowed the book
+    const borrowedBook = await pool.query(
+      "SELECT * FROM borrowed_books WHERE user_id = $1 AND book_id = $2",
+      [user_id, book_id]
+    );
+
+    if (borrowedBook.rowCount === 0) {
+      await pool.query("ROLLBACK");
+      return res.status(400).json({ error: "No borrowed record found for this user" });
+    }
+
+    // Update book quantity only if it does not exceed the total quantity
+    if (quantity < total_quantity) {
+      await pool.query(
+        "UPDATE books SET quantity = quantity + 1 WHERE id = $1",
+        [book_id]
+      );
+    }
+
+    // Remove the borrowed record
     await pool.query(
       "DELETE FROM borrowed_books WHERE user_id = $1 AND book_id = $2",
-      [userId, id]
+      [user_id, book_id]
     );
 
-    res.status(200).json({ message: "Book returned successfully" });
-  } catch (err) {
-    console.error(err);
+    // Commit transaction
+    await pool.query("COMMIT");
+
+    res.json({ message: "Book returned successfully" });
+  } catch (error) {
+    // Rollback on error
+    console.error("Error returning book:", error.stack);
+    await pool.query("ROLLBACK");
     res.status(500).json({ error: "Internal Server Error" });
   }
 });
+
+
+
 
 // Get Borrowed Books for Profile Page
 router.get("/profile/borrowed-books", authenticateJWT, async (req, res) => {

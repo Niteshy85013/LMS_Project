@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import Navbar from './Navbar';
-
+import toast from "react-hot-toast";
 const BooksHome = () => {
   const [books, setBooks] = useState([]);
   const [categories, setCategories] = useState([]);
@@ -44,28 +44,85 @@ const BooksHome = () => {
   };
 
   // Borrow a book
-  const handleBorrow = async (id) => {
+
+  const borrowBook = async (bookId) => {
     try {
-      await axios.post(`http://localhost:5000/api/books/borrow/:id${id}`);
-      fetchBooks(); // Refresh the book list
-      alert('Book borrowed successfully!');
+      // Get token from localStorage
+      const token = localStorage.getItem("token");
+      if (!token) {
+        alert("User not logged in.");
+        return;
+      }
+  
+      const response = await axios.post(
+        "http://localhost:5000/api/books/borrow",
+        { book_id: bookId }, // Corrected request body format
+        {
+          headers: {
+            Authorization: `Bearer ${token}`, // Include token in request headers
+            "Content-Type": "application/json",
+          },
+        }
+      );
+  
+      if (response.status === 200) {
+        toast.success("Book Borrowed successfully!");
+        fetchBooks(); // Refresh books instead of reloading page
+      }
     } catch (error) {
-      console.error('Error borrowing book:', error);
-      alert('Failed to borrow book. Please try again.');
+      console.error("Error borrowing book:", error);
+      alert("Failed to borrow book. Please try again.");
     }
   };
+  
+  
 
   // Return a book
-  const handleReturn = async (id) => {
+  const returnBook = async (bookId) => {
     try {
-      await axios.post(`http://localhost:5000/books/return/${id}`);
-      fetchBooks(); // Refresh the book list
-      alert('Book returned successfully!');
+      // Get token from localStorage
+      const token = localStorage.getItem("token");
+  
+      if (!token) {
+        toast.error("User not logged in.");
+        return;
+      }
+  
+      // Send request to return the book
+      const response = await axios.post(
+        "http://localhost:5000/api/books/return",
+        { book_id: bookId }, // Sending only book_id, assuming backend gets user_id from token
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+  
+      // Handle success response
+      if (response.status === 200 && response.data.message) {
+        toast.success(response.data.message || "Book returned successfully!");
+        if (typeof fetchBooks === "function") fetchBooks(); // Refresh books safely
+      } else {
+        toast.error(response.data.error || "Failed to return book.");
+      }
     } catch (error) {
-      console.error('Error returning book:', error);
-      alert('Failed to return book. Please try again.');
+      console.error("Error returning book:", error);
+  
+      // Handle different types of errors
+      if (error.response) {
+        toast.error(error.response.data.error || "Failed to return book.");
+      } else if (error.request) {
+        toast.error("No response from server. Please try again.");
+      } else {
+        toast.error("An error occurred while returning the book.");
+      }
     }
   };
+  
+
+  
 
   return (
     <>
@@ -130,7 +187,8 @@ const BooksHome = () => {
 
                 {/* Borrow Button */}
                 <button
-                  onClick={() => handleBorrow(book.id)} // Handle borrowing functionality
+                  onClick={() => borrowBook(book.id)}
+                  disabled={book.quantity === 0} // Handle borrowing functionality
                   className="bg-green-500 text-white px-4 py-2 rounded-md hover:bg-green-600 transition-colors"
                 >
                   Borrow
@@ -138,7 +196,7 @@ const BooksHome = () => {
 
                 {/* Return Button */}
                 <button
-                  onClick={() => handleReturn(book.id)} // Handle returning functionality
+                  onClick={() => returnBook(book.id)} // Handle returning functionality
                   className="bg-yellow-500 text-white px-4 py-2 rounded-md hover:bg-yellow-600 transition-colors"
                 >
                   Return
