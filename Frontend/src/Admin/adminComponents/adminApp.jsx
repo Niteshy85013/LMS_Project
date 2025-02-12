@@ -5,6 +5,7 @@ import BooksList from "../BookList";
 import CategoryApp from "../CategoryApp";
 import Users from "./User";
 import Contact from "./Contact";
+import BorrowedBooks from "./BorrowedBooks";
 
 const AdminApp = () => { // Changed to PascalCase
   const [activeComponent, setActiveComponent] = useState("Books");
@@ -19,6 +20,8 @@ const AdminApp = () => { // Changed to PascalCase
         return <Users />;
         case "Contact":
         return <Contact />;
+        case "BorrowedBooks":
+        return <BorrowedBooks />;
       default:
         return <BooksList />;
     }

@@ -53,9 +53,9 @@ const BooksHome = () => {
         alert("User not logged in.");
         return;
       }
-  
+
       const response = await axios.post(
-        "http://localhost:5000/api/books/borrow",
+        "http://localhost:5000/api/borr/borrow",
         { book_id: bookId }, // Corrected request body format
         {
           headers: {
@@ -64,102 +64,119 @@ const BooksHome = () => {
           },
         }
       );
-  
+
       if (response.status === 200) {
         toast.success("Book Borrowed successfully!");
         fetchBooks(); // Refresh books instead of reloading page
       }
     } catch (error) {
       console.error("Error borrowing book:", error);
-      alert("Failed to borrow book. Please try again.");
+      toast.error("Book Already Borrowed!");
     }
   };
-  
-  
+
+
 
   // Return a book
   const returnBook = async (bookId) => {
-    try {
-      // Get token from localStorage
-      const token = localStorage.getItem("token");
-  
-      if (!token) {
-        toast.error("User not logged in.");
-        return;
-      }
-  
-      // Send request to return the book
-      const response = await axios.post(
-        "http://localhost:5000/api/books/return",
-        { book_id: bookId }, // Sending only book_id, assuming backend gets user_id from token
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
-          },
-        }
-      );
-  
-      // Handle success response
-      if (response.status === 200 && response.data.message) {
-        toast.success(response.data.message || "Book returned successfully!");
-        if (typeof fetchBooks === "function") fetchBooks(); // Refresh books safely
-      } else {
-        toast.error(response.data.error || "Failed to return book.");
-      }
-    } catch (error) {
-      console.error("Error returning book:", error);
-  
-      // Handle different types of errors
-      if (error.response) {
-        toast.error(error.response.data.error || "Failed to return book.");
-      } else if (error.request) {
-        toast.error("No response from server. Please try again.");
-      } else {
-        toast.error("An error occurred while returning the book.");
-      }
+  try {
+    // Get token from localStorage
+    const token = localStorage.getItem("token");
+
+    if (!token) {
+      toast.error("User not logged in.");
+      return;
     }
-  };
-  
+
+    // Decode token to inspect its payload
+    const decodedToken = JSON.parse(atob(token.split('.')[1])); // Decoding the token to extract user data
+    console.log("Decoded Token: ", decodedToken); // Log the decoded token to inspect its structure
+
+    // Assuming the user_id is inside the token payload, adjust if necessary
+    const userId = decodedToken?.user_id; // Check if the user_id key exists in decodedToken
+
+    if (!userId) {
+      toast.error("User ID not found in token.");
+      return;
+    }
+
+    console.log("User ID from Token: ", userId); // Verify the extracted user_id
+
+    // Send request to return the book
+    const response = await axios.post(
+      "http://localhost:5000/api/books/return",
+      { user_id: userId, book_id: bookId }, // Sending both user_id and book_id
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      }
+    );
+
+    // Handle success response
+    if (response.status === 200 && response.data.message) {
+      toast.success(response.data.message || "Book returned successfully!");
+      if (typeof fetchBooks === "function") fetchBooks(); // Refresh books safely
+    } else {
+      toast.error(response.data.error || "Failed to return book.");
+    }
+  } catch (error) {
+    console.error("Error returning book:", error);
+
+    // Handle different types of errors
+    if (error.response) {
+      toast.error(error.response.data.error || "Failed to return book.");
+    } else if (error.request) {
+      toast.error("No response from server. Please try again.");
+    } else {
+      toast.error("An error occurred while returning the book.");
+    }
+  }
+};
 
   
+  
+
+
+
 
   return (
     <>
-      
+
       <div className="container mx-auto p-10"></div>
       <div className="container mx-auto p-10">
         {/* View Book Details */}
         {selectedBook && (
           <div className="fixed inset-0 flex items-center justify-center bg-gray-700 bg-opacity-50 z-50">
-          <div className="bg-white p-6 rounded-lg shadow-lg max-w-3xl w-full flex flex-col md:flex-row items-center md:items-start">
-            
-            {/* Left Side - Book Details */}
-            <div className="w-full md:w-1/2 p-4">
-              <h2 className="text-2xl font-semibold text-gray-800 mb-4">{selectedBook.name}</h2>
-              <p className="text-gray-700"><strong>ISBN:</strong> {selectedBook.isbn}</p>
-              <p className="text-gray-700"><strong>Category:</strong> {getCategoryName(selectedBook.category_id)}</p>
-              <p className="text-gray-700"><strong>Quantity:</strong> {selectedBook.quantity}</p>
-              <p className="text-gray-600 mt-2">{selectedBook.description || "No description available"}</p>
-              <button
-                onClick={handleCloseView}
-                className="mt-4 bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-600 transition"
-              >
-                Close
-              </button>
-            </div>
-        
-            {/* Right Side - Book Image */}
-            <div className="w-full md:w-1/2 p-4 flex justify-center">
-              <img
-                src={"/Banner.png"}  // Ensure this path is correct
-                alt={selectedBook.name}
-                className="w-full h-64 object-cover rounded-lg shadow-md"
-              />
+            <div className="bg-white p-6 rounded-lg shadow-lg max-w-3xl w-full flex flex-col md:flex-row items-center md:items-start">
+
+              {/* Left Side - Book Details */}
+              <div className="w-full md:w-1/2 p-4">
+                <h2 className="text-2xl font-semibold text-gray-800 mb-4">{selectedBook.name}</h2>
+                <p className="text-gray-700"><strong>ISBN:</strong> {selectedBook.isbn}</p>
+                <p className="text-gray-700"><strong>Category:</strong> {getCategoryName(selectedBook.category_id)}</p>
+                <p className="text-gray-700"><strong>Quantity:</strong> {selectedBook.quantity}</p>
+                <p className="text-gray-600 mt-2">{selectedBook.description || "No description available"}</p>
+                <button
+                  onClick={handleCloseView}
+                  className="mt-4 bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-600 transition"
+                >
+                  Close
+                </button>
+              </div>
+
+              {/* Right Side - Book Image */}
+              <div className="w-full md:w-1/2 p-4 flex justify-center">
+                <img
+                  src={"/Banner.png"}  // Ensure this path is correct
+                  alt={selectedBook.name}
+                  className="w-full h-64 object-cover rounded-lg shadow-md"
+                />
+              </div>
             </div>
           </div>
-        </div>
-        
+
         )}
 
         {/* Cards Layout */}
@@ -188,8 +205,11 @@ const BooksHome = () => {
                 {/* Borrow Button */}
                 <button
                   onClick={() => borrowBook(book.id)}
-                  disabled={book.quantity === 0} // Handle borrowing functionality
-                  className="bg-green-500 text-white px-4 py-2 rounded-md hover:bg-green-600 transition-colors"
+                  disabled={book.quantity === 0} // Disable if no stock or already borrowed
+                  className={`px-4 py-2 rounded-md transition-colors ${book.quantity === 0
+                      ? "bg-gray-400 cursor-not-allowed"
+                      : "bg-green-500 text-white hover:bg-green-600"
+                    }`}
                 >
                   Borrow
                 </button>

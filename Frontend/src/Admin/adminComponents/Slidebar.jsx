@@ -37,6 +37,14 @@ const Sidebar = ({ setActiveComponent }) => {
             Contacts
           </button>
         </li>
+        <li className="mb-4">
+          <button
+            onClick={() => setActiveComponent("BorrowedBooks")}
+            className="w-full text-left p-2 hover:bg-gray-700 rounded"
+          >
+            Borrowed Books
+          </button>
+        </li>
       </ul>
     </aside>
   );

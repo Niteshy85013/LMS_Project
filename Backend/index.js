@@ -6,6 +6,7 @@ import contactRoute from "./route/contactRoute.js";
 import userRoute from "./route/userRoute.js"; 
 import bookRoute from "./route/bookRoute.js"
 import categoryRoutes from "./route/categoryRoutes.js";
+import borrowRoute from "./route/borrowRoute.js";
 import path from "path";
 import { fileURLToPath } from 'url';
 import { dirname } from 'path';
@@ -27,7 +28,7 @@ app.use("/api/books", bookRoute);
 app.use("/api/users",userRoute)
 app.use("/api/categories", categoryRoutes);
 app.use("/api/contacts", contactRoute)
-
+app.use("/api/borr",borrowRoute)
 app.listen(PORT, () => {
     console.log(`Server is listening on port ${PORT}`);
 });
