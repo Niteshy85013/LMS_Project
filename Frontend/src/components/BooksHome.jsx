@@ -46,7 +46,7 @@ const BooksHome = () => {
   // Borrow a book
   const handleBorrow = async (id) => {
     try {
-      await axios.post(`http://localhost:5000/books/borrow/${id}`);
+      await axios.post(`http://localhost:5000/api/books/borrow/:id${id}`);
       fetchBooks(); // Refresh the book list
       alert('Book borrowed successfully!');
     } catch (error) {
@@ -69,7 +69,7 @@ const BooksHome = () => {
 
   return (
     <>
-      <Navbar />
+      
       <div className="container mx-auto p-10"></div>
       <div className="container mx-auto p-10">
         {/* View Book Details */}

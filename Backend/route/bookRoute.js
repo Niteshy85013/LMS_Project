@@ -94,21 +94,17 @@ router.delete('/:id', async (req, res) => {
 router.post("/books/borrow/:id", authenticateJWT, async (req, res) => {
   const { id } = req.params;
   const userId = req.user.id;
-
   try {
     // Check if the book is available
     const book = await pool.query("SELECT * FROM books WHERE id = $1", [id]);
     if (book.rows.length === 0) {
       return res.status(404).json({ error: "Book not found" });
     }
-
     if (book.rows[0].quantity <= 0) {
       return res.status(400).json({ error: "Book is out of stock" });
     }
-
     // Decrease the book quantity
     await pool.query("UPDATE books SET quantity = quantity - 1 WHERE id = $1", [id]);
-
     // Add to borrowed books
     await pool.query(
       "INSERT INTO borrowed_books (user_id, book_id) VALUES ($1, $2)",

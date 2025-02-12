@@ -63,7 +63,7 @@ function Navbaruser() {
             </div>
             
           </div>
-          <a href="/" className="text-2xl font-bold cursor-pointer">
+          <a href="#" className="text-2xl font-bold cursor-pointer">
             HamroKitab
           </a>
         </div>
