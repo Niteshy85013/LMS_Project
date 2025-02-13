@@ -75,72 +75,6 @@ const BooksHome = () => {
     }
   };
 
-
-
-  // Return a book
-  const returnBook = async (bookId) => {
-  try {
-    // Get token from localStorage
-    const token = localStorage.getItem("token");
-
-    if (!token) {
-      toast.error("User not logged in.");
-      return;
-    }
-
-    // Decode token to inspect its payload
-    const decodedToken = JSON.parse(atob(token.split('.')[1])); // Decoding the token to extract user data
-    console.log("Decoded Token: ", decodedToken); // Log the decoded token to inspect its structure
-
-    // Assuming the user_id is inside the token payload, adjust if necessary
-    const userId = decodedToken?.user_id; // Check if the user_id key exists in decodedToken
-
-    if (!userId) {
-      toast.error("User ID not found in token.");
-      return;
-    }
-
-    console.log("User ID from Token: ", userId); // Verify the extracted user_id
-
-    // Send request to return the book
-    const response = await axios.post(
-      "http://localhost:5000/api/books/return",
-      { user_id: userId, book_id: bookId }, // Sending both user_id and book_id
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
-        },
-      }
-    );
-
-    // Handle success response
-    if (response.status === 200 && response.data.message) {
-      toast.success(response.data.message || "Book returned successfully!");
-      if (typeof fetchBooks === "function") fetchBooks(); // Refresh books safely
-    } else {
-      toast.error(response.data.error || "Failed to return book.");
-    }
-  } catch (error) {
-    console.error("Error returning book:", error);
-
-    // Handle different types of errors
-    if (error.response) {
-      toast.error(error.response.data.error || "Failed to return book.");
-    } else if (error.request) {
-      toast.error("No response from server. Please try again.");
-    } else {
-      toast.error("An error occurred while returning the book.");
-    }
-  }
-};
-
-  
-  
-
-
-
-
   return (
     <>
 
@@ -214,13 +148,7 @@ const BooksHome = () => {
                   Borrow
                 </button>
 
-                {/* Return Button */}
-                <button
-                  onClick={() => returnBook(book.id)} // Handle returning functionality
-                  className="bg-yellow-500 text-white px-4 py-2 rounded-md hover:bg-yellow-600 transition-colors"
-                >
-                  Return
-                </button>
+                
               </div>
             </div>
           ))}

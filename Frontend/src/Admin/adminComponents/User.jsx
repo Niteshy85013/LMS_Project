@@ -1,87 +1,74 @@
-import React, { useEffect, useState } from "react";
-import toast from "react-hot-toast";
-import axios from "axios";
-import { FaTrash } from 'react-icons/fa';
-const Users = () => {
-    const [users, setUsers] = useState([]);
-    const [loading, setLoading] = useState(true);
+import React, { useEffect, useState } from 'react';
+import axios from 'axios';
 
-    // Fetch users from the backend
-    useEffect(() => {
-        fetchUsers();
-    }, []);
+const ProfilePage = () => {
+  const [profile, setProfile] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
 
-    const fetchUsers = async () => {
-        try {
-            const response = await axios.get("http://localhost:5000/api/users"); // Adjust the API endpoint if necessary
-            setUsers(response.data);
-        } catch (error) {
-            console.error("Error fetching users:", error);
-            toast.error("Failed to load users");
-        } finally {
-            setLoading(false);
-        }
-    };
+  // Get userId from localStorage (assumed to be saved when user logs in)
+  const Id = localStorage.getItem('userId');  // Ensure userId is set in localStorage
 
-    // Handle deleting a user
-    const handleDelete = async (id) => {
-        try {
-            await axios.delete(`http://localhost:5000/api/users/${id}`); // Adjust the API endpoint if necessary
-            setUsers(users.filter((user) => user.id !== id));
-            toast.success("User deleted successfully");
-        } catch (error) {
-            console.error("Error deleting user:", error);
-            toast.error("Failed to delete user");
-        }
-    };
-
-    if (loading) {
-        return (
-            <div className="flex justify-center items-center h-screen">
-                <p className="text-lg font-semibold text-gray-600">Loading users...</p>
-            </div>
-        );
+  // Fetch profile and borrowed books data
+  const fetchProfileData = async () => {
+    if (!Id) {
+      setError('User not logged in');
+      setLoading(false);
+      return;
     }
 
-    return (
-        <div className="max-w-5xl mx-auto mt-10 px-4 p-10">
-            <h2 className="text-3xl font-bold text-gray-800 mb-6">User List</h2>
+    try {
+      const response = await axios.get(`http://localhost:5000/api/users/profile/${Id}`);
+      setProfile(response.data); // Set profile data
+      setLoading(false);          // Stop loading
+    } catch (err) {
+      setError('Failed to load profile data');
+      setLoading(false);          // Stop loading even if there is an error
+    }
+  };
 
-            {users.length === 0 ? (
-                <p className="text-lg text-gray-600">No users found.</p>
-            ) : (
-                <div className="overflow-x-auto bg-white shadow-lg rounded-lg border border-gray-200">
-                    <table className="w-full table-auto text-left">
-                        <thead className="bg-gray-100">
-                            <tr>
-                                <th className="px-6 py-3 text-gray-700 text-sm font-medium">ID</th>
-                                <th className="px-6 py-3 text-gray-700 text-sm font-medium">Username</th>
-                                <th className="px-6 py-3 text-gray-700 text-sm font-medium">Email</th>
-                                <th className="px-6 py-3 text-gray-700 text-sm font-medium">Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {users.map((user) => (
-                                <tr key={user.id} className="border-b hover:bg-gray-50">
-                                    <td className="px-6 py-3 text-sm text-gray-800">{user.id}</td>
-                                    <td className="px-6 py-3 text-sm text-gray-800">{user.username}</td>
-                                    <td className="px-6 py-3 text-sm text-gray-800">{user.email}</td>
-                                    <td className="px-6 py-3 text-sm text-center">
-                                        <button
-                                            className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-400"
-                                            onClick={() => handleDelete(user.id)}
-                                        >
-                                            <FaTrash className="w-4 h-4" />
-                                        </button>
-                                    </td>
-                                </tr>
-                            ))}
-                        </tbody>
-                    </table>
-                </div>
-            )}
+  useEffect(() => {
+    fetchProfileData();
+  }, [Id]);
+
+  if (loading) {
+    return <div>Loading...</div>; // Display loading message until data is loaded
+  }
+
+  if (error) {
+    return <div>{error}</div>; // Display error if fetching fails
+  }
+
+  return (
+    <div className="container mx-auto p-4">
+      <h2 className="text-2xl font-semibold mb-4">Profile Information</h2>
+
+      {profile && (
+        <div>
+          <div className="mb-4">
+            <h3 className="font-bold text-lg">Name: {profile.user.username}</h3>
+            <p>Email: {profile.user.email}</p>
+          </div>
+
+          <h3 className="font-semibold text-lg mt-6">Borrowed Books</h3>
+
+          {profile.borrowedBooks.length === 0 ? (
+            <p>No borrowed books found.</p>
+          ) : (
+            <ul className="list-disc ml-5">
+              {profile.borrowedBooks.map((book) => (
+                <li key={book.isbn} className="mb-2">
+                  <strong>{book.book_name}</strong> (ISBN: {book.isbn})
+                  <br />
+                  Borrowed on: {new Date(book.borrowed_at).toLocaleDateString()}
+                </li>
+              ))}
+            </ul>
+          )}
         </div>
-    );
+      )}
+    </div>
+  );
 };
 
-export default Users;
+export default ProfilePage;

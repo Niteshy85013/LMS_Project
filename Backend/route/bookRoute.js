@@ -195,20 +195,7 @@ router.get('/allborrowdata', async (req, res) => {
   }
 });
 
-// Delete a borrowed book by ID
-router.delete('/:id', async (req, res) => {
-  const { id } = req.params;
-  try {
-      const result = await pool.query('DELETE FROM borrowed_books WHERE id = $1', [id]);
-      if (result.rowCount === 0) {
-          return res.status(404).json({ error: 'Book not found' });
-      }
-      res.status(200).json({ message: 'Book deleted successfully' });
-  } catch (err) {
-      console.error('Error deleting borrowed book:', err);
-      res.status(500).json({ error: 'Internal Server Error' });
-  }
-});
+
 
 
 

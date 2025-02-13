@@ -20,27 +20,19 @@ const BorrowedBooks = () => {
         } finally {
             setLoading(false);
         }
-
     };
 
-    // Handle delete of a borrowed book
-    // Handle delete of a borrowed book
+    // Handle delete of a borrowed book using its `id`
     const handleDelete = async (id) => {
         try {
-            const response = await axios.delete(`http://localhost:5000/api/books//${id}`); // Correct the URL to match the backend route
-            if (response.status === 200) {
-                toast.success('Deleted successfully!');
-                // Remove the deleted book from the state using the functional form of setState
-                setBorrowedBooks((prevBorrowedBooks) =>
-                    prevBorrowedBooks.filter((book) => book.id !== id)
-                );
-            }
+            await axios.delete(`http://localhost:5000/api/borr/b/${id}`); // Correct URL for deleting borrowed book by id
+            fetchBorrowedBooks(); // Refresh the borrowed books list
+            toast.success("Borrowed Book deleted!"); // Success toast message
         } catch (error) {
-            console.error('Error deleting borrowed book:', error.response ? error.response.data : error.message); // Log the error response for better debugging
-            toast.error('Failed to delete Borrowed book.');
+            console.error('Error deleting Borrowed Book:', error.response ? error.response.data : error.message);
+            toast.error("Failed to delete Borrowed Book. Please try again."); // Error toast message
         }
     };
-
 
     useEffect(() => {
         fetchBorrowedBooks(); // Fetch borrowed books when the component mounts
@@ -66,13 +58,12 @@ const BorrowedBooks = () => {
                                 <th className="px-6 py-3 text-gray-700">Username</th>
                                 <th className="px-6 py-3 text-gray-700">Email</th>
                                 <th className="px-6 py-3 text-gray-700">Book Title</th>
-
                                 <th className="px-6 py-3 text-gray-700">Action</th>
                             </tr>
                         </thead>
                         <tbody>
                             {borrowedBooks.map((book) => (
-                                <tr key={book.book_title} className="border-b hover:bg-gray-50">
+                                <tr key={book.id} className="border-b hover:bg-gray-50"> {/* Using book.id for key */}
                                     <td className="px-6 py-3 text-sm text-gray-800">{book.borrower_username || 'N/A'}</td>
                                     <td className="px-6 py-3 text-sm text-gray-800">{book.borrower_email || 'N/A'}</td>
                                     <td className="px-6 py-3 text-sm text-gray-800">{book.book_title || 'N/A'}</td>
@@ -80,7 +71,7 @@ const BorrowedBooks = () => {
                                     <td className="px-6 py-3 text-sm text-center">
                                         <button
                                             className="bg-red-500 hover:bg-red-600 text-white p-2 rounded-full focus:outline-none focus:ring-2 focus:ring-red-500"
-                                            onClick={() => handleDelete(book.id)} // Call delete when button is clicked
+                                            onClick={() => handleDelete(book.id)} // Corrected: Use book.id for deletion
                                         >
                                             <FaTrash className="w-4 h-4" />
                                         </button>
