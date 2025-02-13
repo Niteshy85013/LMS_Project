@@ -81,10 +81,8 @@ router.get('/allborrowdata', async (req, res) => {
         res.status(500).json({ error: 'Internal Server Error' });
     }
 });
-
-
   
-  // Delete a borrowed book by ID
+// Delete a borrowed book by ID
   router.delete('/borrowlist/:id', async (req, res) => {
     const { id } = req.params;
     try {
@@ -99,6 +97,20 @@ router.get('/allborrowdata', async (req, res) => {
     }
   });
   
-  
+  router.get("/borrowed-books", authenticateJWT, async (req, res) => {
+    try {
+      const result = await pool.query(
+        `SELECT books.*, borrowed_books.borrowed_at 
+         FROM books 
+         JOIN borrowed_books ON books.id = borrowed_books.book_id 
+         WHERE borrowed_books.user_id = $1`,
+        [req.user.id]
+      );
+      res.status(200).json(result.rows);
+    } catch (err) {
+      console.error(err);
+      res.status(500).json({ error: "Internal Server Error" });
+    }
+  });
   
   export default router;

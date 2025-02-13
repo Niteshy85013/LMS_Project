@@ -46,7 +46,7 @@ function Navbar() {
         <a>Contact</a>
       </li>
       <li>
-        <a href="/b">Books</a>
+        <a href="#">Books</a>
       </li>
     </>
   );

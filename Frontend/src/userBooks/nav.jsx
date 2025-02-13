@@ -1,11 +1,15 @@
-import React, { useEffect, useState } from "react";
-
+import React, { useEffect, useState, useRef } from "react";
+import { FaUserCircle } from "react-icons/fa";
+import { useNavigate } from "react-router-dom"; // FIX: Import useNavigate
+import toast from "react-hot-toast";
 function Navbaruser() {
-  const [theme, setTheme] = useState(
-    localStorage.getItem("theme") ? localStorage.getItem("theme") : "light"
-  );
+  const [theme, setTheme] = useState(localStorage.getItem("theme") || "light");
   const element = document.documentElement;
-  
+  const [sticky, setSticky] = useState(false);
+  const [dropdownOpen, setDropdownOpen] = useState(false);
+  const dropdownRef = useRef(null);
+  const navigate = useNavigate(); // FIX: Initialize navigate
+
   useEffect(() => {
     if (theme === "dark") {
       element.classList.add("dark");
@@ -18,27 +22,41 @@ function Navbaruser() {
     }
   }, [theme]);
 
-  const [sticky, setSticky] = useState(false);
   useEffect(() => {
     const handleScroll = () => {
-      if (window.scrollY > 0) {
-        setSticky(true);
-      } else {
-        setSticky(false);
-      }
+      setSticky(window.scrollY > 0);
     };
     window.addEventListener("scroll", handleScroll);
-    return () => {
-      window.removeEventListener("scroll", handleScroll);
-    };
+    return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setDropdownOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  const handleLogout = () => {
+    localStorage.removeItem("token"); // Remove token from storage
+
+    // FIX: Use useNavigate() to redirect properly
+    setDropdownOpen(false); // Close dropdown before redirecting
+    setTimeout(() => {
+      navigate("/");
+    }, 200);
+    toast.success("Logout successful!"); // Delay redirection slightly for better UI
+  };
 
   return (
     <div
       className={`max-w-screen-2xl container mx-auto md:px-20 px-4 dark:bg-slate-800 dark:text-white fixed top-0 left-0 right-0 z-50 ${
         sticky
-          ? "sticky-navbar shadow-md bg-base-200 dark:bg-slate-700 dark:text-white duration-300 transition-all ease-in-out"
+          ? "sticky-navbar shadow-md bg-base-200 dark:bg-slate-700 dark:text-white transition-all duration-300 ease-in-out"
           : ""
       }`}
     >
@@ -61,20 +79,34 @@ function Navbaruser() {
                 />
               </svg>
             </div>
-            
           </div>
           <a href="#" className="text-2xl font-bold cursor-pointer">
             HamroKitab
           </a>
         </div>
         <div className="navbar-end space-x-3">
-          {/* <div className="navbar-center hidden lg:flex">
-            <ul className="menu menu-horizontal px-1">{navItems}</ul>
-          </div> */}
-          <div className="hidden md:block">
-            
+          {/* Profile Icon with Dropdown */}
+          <div className="relative" ref={dropdownRef}>
+            <button onClick={() => setDropdownOpen(!dropdownOpen)}>
+              <FaUserCircle className="w-8 h-8 text-gray-600 dark:text-white cursor-pointer" />
+            </button>
+            {dropdownOpen && (
+              <div className="absolute right-0 mt-2 w-40 bg-white dark:bg-gray-800 rounded-lg shadow-lg py-2">
+                <a
+                  href="/profile"
+                  className="block px-4 py-2 text-gray-700 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700"
+                >
+                  Profile
+                </a>
+                <button
+                  onClick={handleLogout} // FIX: Use corrected logout function
+                  className="w-full text-left px-4 py-2 text-gray-700 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700"
+                >
+                  Logout
+                </button>
+              </div>
+            )}
           </div>
-         
         </div>
       </div>
     </div>

@@ -24,19 +24,23 @@ const BorrowedBooks = () => {
     };
 
     // Handle delete of a borrowed book
-    const handleDelete = async (id) => {
-        try {
-            const response = await axios.delete(`http://localhost:5000/api/borr/borrowlist/${id}`);
-            if (response.status === 200) {
-                toast.success('Deleted successfully!');
-                // Remove the deleted book from the state
-                setBorrowedBooks(borrowedBooks.filter((book) => book.id !== id));
-            }
-        } catch (error) {
-            console.error('Error deleting borrowed book:', error);
-            toast.error('Failed to delete Borrowed book.');
+    // Handle delete of a borrowed book
+const handleDelete = async (id) => {
+    try {
+        const response = await axios.delete(`http://localhost:5000/api/books/borrowlist/${id}`); // Correct the URL to match the backend route
+        if (response.status === 200) {
+            toast.success('Deleted successfully!');
+            // Remove the deleted book from the state using the functional form of setState
+            setBorrowedBooks((prevBorrowedBooks) => 
+                prevBorrowedBooks.filter((book) => book.id !== id)
+            );
         }
-    };
+    } catch (error) {
+        console.error('Error deleting borrowed book:', error.response ? error.response.data : error.message); // Log the error response for better debugging
+        toast.error('Failed to delete Borrowed book.');
+    }
+};
+
 
     useEffect(() => {
         fetchBorrowedBooks(); // Fetch borrowed books when the component mounts

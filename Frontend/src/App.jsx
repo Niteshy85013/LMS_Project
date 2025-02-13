@@ -10,6 +10,7 @@ import BooksList from "./Admin/BookList";
 import BooksHome from "./components/BooksHome";
 import AdminApp from "./Admin/adminComponents/adminApp";
 import UserBooks from "./userBooks/Home";
+import Profile from "./components/profile";
 
 
 
@@ -32,7 +33,8 @@ function App() {
           <Route path="/admin" element={<AdminApp/>} />
           <Route path="/signup" element={<Signup />} />
           <Route path="/books" element={<BooksList/>} />
-          <Route path="/userbook" element={<UserBooks/>} />
+          <Route path="/userbook" element={ <UserBooks/> } />
+          <Route path="/profile" element={<Profile/>} />
         </Routes>
         <Toaster />
       </div>
