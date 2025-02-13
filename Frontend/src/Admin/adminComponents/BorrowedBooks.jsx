@@ -20,26 +20,26 @@ const BorrowedBooks = () => {
         } finally {
             setLoading(false);
         }
-        
+
     };
 
     // Handle delete of a borrowed book
     // Handle delete of a borrowed book
-const handleDelete = async (id) => {
-    try {
-        const response = await axios.delete(`http://localhost:5000/api/books/borrowlist/${id}`); // Correct the URL to match the backend route
-        if (response.status === 200) {
-            toast.success('Deleted successfully!');
-            // Remove the deleted book from the state using the functional form of setState
-            setBorrowedBooks((prevBorrowedBooks) => 
-                prevBorrowedBooks.filter((book) => book.id !== id)
-            );
+    const handleDelete = async (id) => {
+        try {
+            const response = await axios.delete(`http://localhost:5000/api/books//${id}`); // Correct the URL to match the backend route
+            if (response.status === 200) {
+                toast.success('Deleted successfully!');
+                // Remove the deleted book from the state using the functional form of setState
+                setBorrowedBooks((prevBorrowedBooks) =>
+                    prevBorrowedBooks.filter((book) => book.id !== id)
+                );
+            }
+        } catch (error) {
+            console.error('Error deleting borrowed book:', error.response ? error.response.data : error.message); // Log the error response for better debugging
+            toast.error('Failed to delete Borrowed book.');
         }
-    } catch (error) {
-        console.error('Error deleting borrowed book:', error.response ? error.response.data : error.message); // Log the error response for better debugging
-        toast.error('Failed to delete Borrowed book.');
-    }
-};
+    };
 
 
     useEffect(() => {
@@ -66,6 +66,7 @@ const handleDelete = async (id) => {
                                 <th className="px-6 py-3 text-gray-700">Username</th>
                                 <th className="px-6 py-3 text-gray-700">Email</th>
                                 <th className="px-6 py-3 text-gray-700">Book Title</th>
+
                                 <th className="px-6 py-3 text-gray-700">Action</th>
                             </tr>
                         </thead>
@@ -75,6 +76,7 @@ const handleDelete = async (id) => {
                                     <td className="px-6 py-3 text-sm text-gray-800">{book.borrower_username || 'N/A'}</td>
                                     <td className="px-6 py-3 text-sm text-gray-800">{book.borrower_email || 'N/A'}</td>
                                     <td className="px-6 py-3 text-sm text-gray-800">{book.book_title || 'N/A'}</td>
+
                                     <td className="px-6 py-3 text-sm text-center">
                                         <button
                                             className="bg-red-500 hover:bg-red-600 text-white p-2 rounded-full focus:outline-none focus:ring-2 focus:ring-red-500"

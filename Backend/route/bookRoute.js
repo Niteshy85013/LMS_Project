@@ -196,7 +196,7 @@ router.get('/allborrowdata', async (req, res) => {
 });
 
 // Delete a borrowed book by ID
-router.delete('/borrowlist/:id', async (req, res) => {
+router.delete('/:id', async (req, res) => {
   const { id } = req.params;
   try {
       const result = await pool.query('DELETE FROM borrowed_books WHERE id = $1', [id]);

@@ -79,7 +79,7 @@ function Freebook() {
             <p className="text-gray-700"><strong>ISBN:</strong> {selectedBook.isbn}</p>
             <p className="text-gray-700"><strong>Category:</strong> {getCategoryName(selectedBook.category_id)}</p>
             <p className="text-gray-700"><strong>Quantity:</strong> {selectedBook.quantity}</p>
-            <p className="text-gray-600 mt-2">{selectedBook.description || "No description available"}</p>
+            <p className="text-gray-700 mt-2"><strong>Description:</strong>{selectedBook.description || "No description available"}</p>
             <button
               onClick={handleCloseView}
               className="mt-4 bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-600 transition"

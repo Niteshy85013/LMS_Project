@@ -61,6 +61,7 @@ router.get('/allborrowdata', async (req, res) => {
                 u.username AS borrower_username,
                 u.email AS borrower_email,
                 b.name AS book_title
+                
             FROM 
                 borrowed_books bb
             JOIN 
