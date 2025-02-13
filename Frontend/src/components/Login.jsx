@@ -29,26 +29,32 @@ function Login() {
     }
   };
 
+  // Function to close the modal
+  const closeModal = () => {
+    document.getElementById("my_modal_3").close();
+  };
+
   return (
     <div>
       {/* Button to Open Modal */}
-      <button
+      {/* <button
         className="btn btn-primary"
         onClick={() => document.getElementById("my_modal_3").showModal()}
       >
         Open Login
-      </button>
+      </button> */}
 
       <dialog id="my_modal_3" className="modal">
         <div className="modal-box">
           <form onSubmit={handleSubmit(handleLogin)} method="dialog">
             {/* Close Button */}
-            <Link
-              to="/"
+            <button
+              type="button"
               className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2"
+              onClick={closeModal} // Close the modal on click
             >
               ✕
-            </Link>
+            </button>
 
             <h3 className="font-bold text-lg">Login</h3>
 

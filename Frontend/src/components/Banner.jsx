@@ -57,7 +57,7 @@ function Banner() {
                 type="submit"
                 className="btn mt-6 btn-secondary"
               >
-                Get Started
+                Contact Now
               </button>
             </form>
           </div>
