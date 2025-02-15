@@ -22,18 +22,17 @@ const BorrowedBooks = () => {
         }
     };
 
-    // Handle delete of a borrowed book using its `id`
     const handleDelete = async (id) => {
+        if (!window.confirm("Are you sure you want to delete this borrowed book?")) return;
+      
         try {
-            await axios.delete(`http://localhost:5000/api/borr/b/${id}`); // Correct URL for deleting borrowed book by id
-            fetchBorrowedBooks(); // Refresh the borrowed books list
-            toast.success("Borrowed Book deleted!"); // Success toast message
-        } catch (error) {
-            console.error('Error deleting Borrowed Book:', error.response ? error.response.data : error.message);
-            toast.error("Failed to delete Borrowed Book. Please try again."); // Error toast message
+          const response = await axios.delete(`http://localhost:5000/api/borr/${id}`);
+          console.log("Delete response:", response.data); // Debugging step
+        } catch (err) {
+          console.error("Delete error:", err.response?.data || err.message);
         }
-    };
-
+      };
+      
     useEffect(() => {
         fetchBorrowedBooks(); // Fetch borrowed books when the component mounts
     }, []);
@@ -58,6 +57,8 @@ const BorrowedBooks = () => {
                                 <th className="px-6 py-3 text-gray-700">Username</th>
                                 <th className="px-6 py-3 text-gray-700">Email</th>
                                 <th className="px-6 py-3 text-gray-700">Book Title</th>
+                                <th className="px-6 py-3 text-gray-700">Book ISBN</th>
+                                <th className="px-6 py-3 text-gray-700">Book Author</th>
                                 <th className="px-6 py-3 text-gray-700">Action</th>
                             </tr>
                         </thead>
@@ -67,13 +68,15 @@ const BorrowedBooks = () => {
                                     <td className="px-6 py-3 text-sm text-gray-800">{book.borrower_username || 'N/A'}</td>
                                     <td className="px-6 py-3 text-sm text-gray-800">{book.borrower_email || 'N/A'}</td>
                                     <td className="px-6 py-3 text-sm text-gray-800">{book.book_title || 'N/A'}</td>
+                                    <td className="px-6 py-3 text-sm text-gray-800">{book.book_isbn || 'N/A'}</td>
+                                    <td className="px-6 py-3 text-sm text-gray-800">{book.book_author || 'N/A'}</td>
 
                                     <td className="px-6 py-3 text-sm text-center">
                                         <button
-                                            className="bg-red-500 hover:bg-red-600 text-white p-2 rounded-full focus:outline-none focus:ring-2 focus:ring-red-500"
-                                            onClick={() => handleDelete(book.id)} // Corrected: Use book.id for deletion
+                                            onClick={() => handleDelete(book.id)}
+                                            className="bg-red-500 text-white px-3 py-1 rounded-md hover:bg-red-700"
                                         >
-                                            <FaTrash className="w-4 h-4" />
+                                            Delete
                                         </button>
                                     </td>
                                 </tr>

@@ -78,31 +78,6 @@ router.delete("/:id", async (req, res) => {
   }
 });
 
-// Get user profile by ID
-// router.get('/:id', async (req, res) => {
-//   let { id } = req.params;
-
-//   // Ensure ID is an integer
-//   id = parseInt(id, 10);
-//   if (isNaN(id)) {
-//     return res.status(400).json({ error: 'Invalid user ID' });
-//   }
-
-//   try {
-//     const query = `SELECT id, username, email FROM users WHERE id = $1`;
-//     const result = await pool.query(query, [id]);
-
-//     if (result.rows.length === 0) {
-//       return res.status(404).json({ error: 'User not found' });
-//     }
-
-//     res.status(200).json(result.rows[0]);
-//   } catch (err) {
-//     console.error('Error fetching user profile:', err);
-//     res.status(500).json({ error: 'Internal Server Error' });
-//   }
-// });
-
 // Get profile information by user ID
 router.get('/profile/:Id', async (req, res) => {
   const { Id } = req.params;

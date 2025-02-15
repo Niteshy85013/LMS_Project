@@ -60,7 +60,9 @@ router.get('/allborrowdata', async (req, res) => {
             SELECT 
                 u.username AS borrower_username,
                 u.email AS borrower_email,
-                b.name AS book_title
+                b.name AS book_title,
+                b.author AS book_author,
+                b.isbn AS book_isbn
                 
             FROM 
                 borrowed_books bb
@@ -84,32 +86,33 @@ router.get('/allborrowdata', async (req, res) => {
 });
   
 
-// Delete a borrowed book by ID
-router.delete('/b/:id', async (req, res) => {
+router.delete("/:id", async (req, res) => {
   const { id } = req.params;
+  console.log("Received ID for deletion:", id); // Debugging step
 
-  // Step 1: Validate the ID
-  if (isNaN(id)) {
-    return res.status(400).json({ error: 'Invalid ID format. ID must be a number.' });
+  if (!id) {
+    return res.status(400).json({ error: "ID is required" });
   }
 
   try {
-    // Step 2: Run the delete query
-    const result = await pool.query('DELETE FROM borrowed_books WHERE id = $1 RETURNING *', [id]);
+    const result = await pool.query(
+      "DELETE FROM borrowed_books WHERE id = $1 RETURNING *",
+      [id]
+    );
 
-    // Step 3: Handle result if no rows are affected
     if (result.rowCount === 0) {
-      return res.status(404).json({ error: 'Borrowed Book not found' });
+      console.log("No record found with ID:", id); // Debugging step
+      return res.status(404).json({ error: "Borrowed book not found" });
     }
 
-    // Step 4: Send success message if book was deleted
-    res.status(200).json({ message: 'Borrowed Book deleted successfully' });
+    console.log("Deleted Borrowed Book:", result.rows[0]); // Debugging step
+    res.status(200).json({ message: "Borrowed book deleted successfully" });
   } catch (err) {
-    // Step 5: Enhanced error handling
-    console.error('Error deleting Borrowed Book:', err);
-    res.status(500).json({ error: 'Internal Server Error', details: err.message });
+    console.error("Error deleting borrowed book:", err);
+    res.status(500).json({ error: "Failed to delete borrowed book" });
   }
 });
+
 
   router.get("/borrowed-books", authenticateJWT, async (req, res) => {
     try {

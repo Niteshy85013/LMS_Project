@@ -77,7 +77,6 @@ const BooksHome = () => {
 
   return (
     <>
-
       <div className="container mx-auto p-10"></div>
       <div className="container mx-auto p-10">
         {/* View Book Details */}
@@ -89,9 +88,10 @@ const BooksHome = () => {
               <div className="w-full md:w-1/2 p-4">
                 <h2 className="text-2xl font-semibold text-gray-800 mb-4">{selectedBook.name}</h2>
                 <p className="text-gray-700"><strong>ISBN:</strong> {selectedBook.isbn}</p>
-                <p className="text-gray-700"><strong>Category:</strong> {getCategoryName(selectedBook.category_id)}</p>
-                <p className="text-gray-700"><strong>Quantity:</strong> {selectedBook.quantity}</p>
-                <p className="text-gray-600 mt-2">{selectedBook.description || "No description available"}</p>
+                <p className="text-gray-700"><strong>Category: </strong> {getCategoryName(selectedBook.category_id)}</p>
+                <p className="text-gray-700"><strong>Quantity: </strong> {selectedBook.quantity}</p>
+                <p className="text-gray-700"><strong>Author: </strong> {selectedBook.author}</p>
+                <p className="text-gray-600 mt-2"><strong>Description: </strong>{selectedBook.description || "No description available"}</p>
                 <button
                   onClick={handleCloseView}
                   className="mt-4 bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-600 transition"
@@ -125,7 +125,7 @@ const BooksHome = () => {
 
               <h3 className="text-xl font-semibold text-gray-800">{book.name}</h3>
               <p className="text-gray-600 mb-4">ISBN: {book.isbn}</p>
-              <p className="text-gray-500 mb-4">Category: {getCategoryName(book.category_id)}</p>
+              <p className="text-gray-500 mb-4">Author: {book.author}</p>
               <p className="text-gray-500 mb-4">Quantity: {book.quantity}</p>
 
               <div className="flex space-x-4">
@@ -141,14 +141,12 @@ const BooksHome = () => {
                   onClick={() => borrowBook(book.id)}
                   disabled={book.quantity === 0} // Disable if no stock or already borrowed
                   className={`px-4 py-2 rounded-md transition-colors ${book.quantity === 0
-                      ? "bg-gray-400 cursor-not-allowed"
-                      : "bg-green-500 text-white hover:bg-green-600"
+                    ? "bg-gray-400 cursor-not-allowed"
+                    : "bg-green-500 text-white hover:bg-green-600"
                     }`}
                 >
                   Borrow
                 </button>
-
-                
               </div>
             </div>
           ))}

@@ -5,6 +5,7 @@ const BookForm = ({ book, onFormSubmit }) => {
   const [formData, setFormData] = useState({
     name: '',
     isbn: '',
+    author: '',
     quantity: '',
     description: '',
     category_id: '',
@@ -23,6 +24,7 @@ const BookForm = ({ book, onFormSubmit }) => {
       setFormData({
         name: book.name,
         isbn: book.isbn,
+        author: book.author,
         quantity: book.quantity,
         description: book.description,
         category_id: book.category_id,
@@ -82,6 +84,18 @@ const BookForm = ({ book, onFormSubmit }) => {
             value={formData.isbn}
             onChange={handleChange}
             placeholder="Enter ISBN"
+            className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
+            required
+          />
+        </div>
+        <div>
+          <label className="block text-gray-600 font-medium mb-2">Author</label>
+          <input
+            type="text"
+            name="author"
+            value={formData.author}
+            onChange={handleChange}
+            placeholder="Enter Author"
             className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
             required
           />

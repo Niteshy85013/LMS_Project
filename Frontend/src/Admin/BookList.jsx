@@ -100,6 +100,7 @@ const BooksList = () => {
             <tr className="bg-gray-100">
               <th className="py-2 px-4 border-b text-left text-gray-700 font-semibold">Book Name</th>
               <th className="py-2 px-4 border-b text-left text-gray-700 font-semibold">ISBN</th>
+              <th className="py-2 px-4 border-b text-left text-gray-700 font-semibold">Author</th>
               <th className="py-2 px-4 border-b text-left text-gray-700 font-semibold">Quantity</th>
               <th className="py-2 px-4 border-b text-left text-gray-700 font-semibold">Category</th>
               <th className="py-2 px-4 border-b text-left text-gray-700 font-semibold">Actions</th>
@@ -108,11 +109,12 @@ const BooksList = () => {
           <tbody>
             {books.map((book) => (
               <tr key={book.id} className="border-b hover:bg-gray-50">
-                <td className="py-2 px-4">{book.name}</td>
-                <td className="py-2 px-4">{book.isbn}</td>
-                <td className="py-2 px-4">{book.quantity}</td>
-                <td className="py-2 px-4">{getCategoryName(book.category_id)}</td>
-                <td className="py-2 px-4 flex space-x-4">
+                <td className="py-2 text-gray-500 px-4">{book.name}</td>
+                <td className="py-2 text-gray-500 px-4">{book.isbn}</td>
+                <td className="py-2 text-gray-500 px-4">{book.author}</td>
+                <td className="py-2 text-gray-500 px-4">{book.quantity}</td>
+                <td className="py-2 text-gray-500 px-4">{getCategoryName(book.category_id)}</td>
+                <td className="py-2  px-4 flex space-x-4">
                   <button
                     onClick={() => handleEdit(book)}
                     className="bg-yellow-500 text-white p-2 rounded-md hover:bg-yellow-600 transition-colors"

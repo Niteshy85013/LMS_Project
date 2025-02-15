@@ -105,7 +105,7 @@ const ItemList = () => {
             {items.length > 0 ? (
               items.map((item) => (
                 <tr key={item.id} className="hover:bg-gray-100">
-                  <td className="py-3 px-6 border-b">{item.name}</td>
+                  <td className="py-3 px-6 text-gray-500 border-b">{item.name}</td>
                  
                   <td className="py-3 px-6 border-b text-center space-x-2">
                     <button

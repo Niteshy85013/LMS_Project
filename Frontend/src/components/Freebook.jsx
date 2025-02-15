@@ -77,7 +77,7 @@ function Freebook() {
           <div className="w-full md:w-1/2 p-4">
             <h2 className="text-2xl font-semibold text-gray-800 mb-4">{selectedBook.name}</h2>
             <p className="text-gray-700"><strong>ISBN:</strong> {selectedBook.isbn}</p>
-            <p className="text-gray-700"><strong>Category:</strong> {getCategoryName(selectedBook.category_id)}</p>
+            <p className="text-gray-700"><strong>Author:</strong> {selectedBook.author}</p>
             <p className="text-gray-700"><strong>Quantity:</strong> {selectedBook.quantity}</p>
             <p className="text-gray-700 mt-2"><strong>Description:</strong>{selectedBook.description || "No description available"}</p>
             <button
@@ -113,8 +113,8 @@ function Freebook() {
                   className="w-full h-48 object-cover rounded-lg"
                 />
                 <div className="mt-4">
-                  <h2 className="text-lg font-semibold">{book.name}</h2>
-                  <p className="text-gray-500 text-sm">{getCategoryName(book.category_id)}</p>
+                  <h2 className="text-gray-500 text-sm">{book.name}</h2>
+                  <p className="text-gray-500 text-sm"><strong>By: </strong> {book.author}</p>
                   
                   <button
                     onClick={() => handleView(book)}
