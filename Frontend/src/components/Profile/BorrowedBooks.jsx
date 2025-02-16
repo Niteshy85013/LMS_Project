@@ -15,7 +15,7 @@ const BorrowedBoo = () => {
 
         if (!token) {
             toast.error("You are not logged in.");
-            navigate("/"); 
+            navigate("/");
             return;
         }
 
@@ -37,19 +37,32 @@ const BorrowedBoo = () => {
         fetchProfile();
     }, [navigate]);
 
-    const handleReturnBook = (bookId) => {
-        // Logic to return a borrowed book, e.g., sending a request to your backend
-        axios.post("http://localhost:5000/api/return/return-book", { bookId })
-            // eslint-disable-next-line no-unused-vars
-            .then(response => {
+    const handleReturnBook = async (bookId) => {
+        try {
+            const token = localStorage.getItem("token"); // Ensure token is included if required
+            const response = await axios.post(
+                "http://localhost:5000/api/return/return-book",
+                { bookId }, // Ensure this matches the backend expectations
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`, // Add token if API requires auth
+                        "Content-Type": "application/json"
+                    }
+                }
+            );
+
+            if (response.status === 200) { // Ensure successful response
                 toast.success("Book returned successfully!");
-                setBorrowedBooks(borrowedBooks.filter(book => book.id !== bookId)); // Update the UI
-            })
-            // eslint-disable-next-line no-unused-vars
-            .catch(error => {
-                toast.error("Failed to return the book.");
-            });
+                setBorrowedBooks(prevBooks => prevBooks.filter(book => book.id !== bookId)); // Update UI
+            } else {
+                toast.error("Unexpected response from server.");
+            }
+        } catch (error) {
+            console.error("Return Book Error:", error);
+            toast.error(error.response?.data?.message || "Failed to return the book.");
+        }
     };
+
 
     if (loading) return <p className="text-center text-gray-500 mt-10">Loading...</p>;
 

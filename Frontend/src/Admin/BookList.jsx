@@ -97,14 +97,14 @@ const BooksList = () => {
       {/* Books List in Table Format */}
       <div className="overflow-x-auto bg-white shadow-md rounded-lg">
         <table className="min-w-full table-auto">
-          <thead>
-            <tr className="bg-gray-100">
-              <th className="py-2 px-4 border-b text-left text-gray-700 font-semibold">Book Name</th>
-              <th className="py-2 px-4 border-b text-left text-gray-700 font-semibold">ISBN</th>
-              <th className="py-2 px-4 border-b text-left text-gray-700 font-semibold">Author</th>
-              <th className="py-2 px-4 border-b text-left text-gray-700 font-semibold">Quantity</th>
-              <th className="py-2 px-4 border-b text-left text-gray-700 font-semibold">Category</th>
-              <th className="py-2 px-4 border-b text-left text-gray-700 font-semibold">Actions</th>
+          <thead className="bg-blue-500 text-white">
+            <tr>
+              <th className="py-2 px-4 border-b text-left  font-semibold">Book Name</th>
+              <th className="py-2 px-4 border-b text-left  font-semibold">ISBN</th>
+              <th className="py-2 px-4 border-b text-left  font-semibold">Author</th>
+              <th className="py-2 px-4 border-b text-left  font-semibold">Quantity</th>
+              <th className="py-2 px-4 border-b text-left  font-semibold">Category</th>
+              <th className="py-2 px-4 border-b text-left  font-semibold">Actions</th>
             </tr>
           </thead>
           <tbody>

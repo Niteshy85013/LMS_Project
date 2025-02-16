@@ -3,6 +3,7 @@ import React, { useState } from "react";
 import Sidebar from "./Slidebar";
 import Profile from "./profile";
 import BorrowedBoo from "./BorrowedBooks";
+import Navbaruser from "../../userBooks/nav";
 
 const ProfileApp = () => { // Changed to PascalCase
   const [activeComponent, setActiveComponent] = useState("Books");
@@ -20,7 +21,7 @@ const ProfileApp = () => { // Changed to PascalCase
 
   return (
     <div className="min-h-screen flex flex-col">
-      {/* <Header /> */}
+   <Navbaruser/>
       <div className="flex flex-1">
         <Sidebar setActiveComponent={setActiveComponent} />
         <main className="flex-1 bg-gray-100 p-4">

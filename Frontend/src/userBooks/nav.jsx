@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import React, { useEffect, useState, useRef } from "react";
 import { FaUserCircle } from "react-icons/fa";
 import { useNavigate } from "react-router-dom"; // FIX: Import useNavigate
@@ -80,7 +81,7 @@ function Navbaruser() {
               </svg>
             </div>
           </div>
-          <a href="#" className="text-2xl font-bold cursor-pointer">
+          <a href="/userbook" className="text-2xl font-bold cursor-pointer">
             HamroKitab
           </a>
         </div>

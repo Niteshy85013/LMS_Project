@@ -1,3 +1,5 @@
+/* eslint-disable react/prop-types */
+/* eslint-disable no-unused-vars */
 import React, { useState } from 'react';
 import axios from 'axios';
 import toast from "react-hot-toast";
@@ -24,6 +26,7 @@ const CreateItem = ({ fetchItems }) => {
           <input
             id="name"
             type="text"
+            required
             placeholder="Enter category name"
             value={name}
             onChange={(e) => setName(e.target.value)}

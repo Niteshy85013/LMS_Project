@@ -62,7 +62,7 @@ const ItemList = () => {
   return (
     <div className="max-w-4xl mx-auto p-6">
       
-      <h2 className="text-2xl font-bold text-center mb-4">Category List</h2>
+      <h2 className="text-3xl font-bold mb-6 text-center text-gray-800">Category List</h2>
 
       {/* Edit Form - Shown Only When Editing */}
       {editItem && (
@@ -96,8 +96,8 @@ const ItemList = () => {
       {/* Category List Table */}
       <div className="overflow-x-auto shadow-md rounded-lg">
         <table className="min-w-full bg-white border border-gray-200">
-          <thead className="bg-gray-200">
-            <tr className="text-gray-700">
+          <thead className="bg-blue-500 text-white">
+            <tr>
               <th className="py-3 px-6 border-b text-left">Name</th>
               
               <th className="py-3 px-6 border-b text-center">Actions</th>
