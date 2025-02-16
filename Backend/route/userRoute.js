@@ -92,22 +92,52 @@ const authenticateToken = (req, res, next) => {
   }
 };
 
+// User Profile
+// router.get("/profile", authenticateToken, async (req, res) => {
+//   const userId = req.user.id; // Extract user ID from the token
+
+//   try {
+//       const result = await pool.query("SELECT id, username, email FROM users WHERE id = $1", [userId]);
+      
+//       if (result.rows.length === 0) {
+//           return res.status(404).json({ error: "User not found" });
+//       }
+
+//       res.status(200).json({ userProfile: result.rows[0] });
+//   } catch (err) {
+//       console.error("Error fetching user profile:", err);
+//       res.status(500).json({ error: "Internal Server Error" });
+//   }
+// });
+
 router.get("/profile", authenticateToken, async (req, res) => {
   const userId = req.user.id; // Extract user ID from the token
 
   try {
-      const result = await pool.query("SELECT id, username, email FROM users WHERE id = $1", [userId]);
-      
-      if (result.rows.length === 0) {
+      // Query user profile
+      const userResult = await pool.query("SELECT id, username, email FROM users WHERE id = $1", [userId]);
+      if (userResult.rows.length === 0) {
           return res.status(404).json({ error: "User not found" });
       }
+      
+      // Query borrowed books by the user
+      const borrowedBooksResult = await pool.query(`
+          SELECT books.id, books.name, books.author, books.isbn, borrowed_books.borrowed_at 
+          FROM borrowed_books 
+          JOIN books ON borrowed_books.book_id = books.id 
+          WHERE borrowed_books.user_id = $1
+      `, [userId]);
 
-      res.status(200).json({ userProfile: result.rows[0] });
+      res.status(200).json({
+          userProfile: userResult.rows[0],
+          borrowedBooks: borrowedBooksResult.rows
+      });
   } catch (err) {
-      console.error("Error fetching user profile:", err);
+      console.error("Error fetching user profile and borrowed books:", err);
       res.status(500).json({ error: "Internal Server Error" });
   }
 });
+
 
 
 

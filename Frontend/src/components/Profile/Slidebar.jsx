@@ -16,7 +16,7 @@ const Sidebar = ({ setActiveComponent }) => {
         </li>
         <li className="mb-4">
           <button
-            onClick={() => setActiveComponent("Category")}
+            onClick={() => setActiveComponent("BorrowedBooks")}
             className="w-full text-left p-2 hover:bg-gray-700 rounded"
           >
             Borrowed Books

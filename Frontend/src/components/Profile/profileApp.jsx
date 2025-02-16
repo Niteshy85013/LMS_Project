@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import Header from "./Header";
 import Sidebar from "./Slidebar";
 import Profile from "./profile";
+import BorrowedBoo from "./BorrowedBooks";
 
 const ProfileApp = () => { // Changed to PascalCase
   const [activeComponent, setActiveComponent] = useState("Books");
@@ -10,8 +11,8 @@ const ProfileApp = () => { // Changed to PascalCase
     switch (activeComponent) {
       case "profile":
         return <Profile />;
-        // case "BorrowedBooks":
-        // return <BorrowedBooks />;
+        case "BorrowedBooks":
+        return <BorrowedBoo/>;
       default:
         return <Profile />;
     }

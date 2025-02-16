@@ -13,7 +13,7 @@ const Profile = () => {
 
         if (!token) {
             toast.error("You are not logged in.");
-            navigate("/login"); // Redirect to login if no token
+            navigate("/"); // Redirect to login if no token
             return;
         }
 
@@ -24,8 +24,8 @@ const Profile = () => {
                 });
                 setProfile(response.data.userProfile);
             } catch (error) {
-                toast.error("Failed to fetch profile.");
-                navigate("/login"); // Redirect to login if error
+                toast.error("Login Required.");
+                navigate("/"); 
             } finally {
                 setLoading(false);
             }
