@@ -1,6 +1,7 @@
+// eslint-disable-next-line no-unused-vars
 import React from "react";
 import Home from "./home/Home";
-import { Navigate, Route, Routes } from "react-router-dom";
+import { Route, Routes } from "react-router-dom";
 
 import Signup from "./components/Signup";
 import { Toaster } from "react-hot-toast";
@@ -16,6 +17,7 @@ import ProfileApp from "./components/Profile/profileApp";
 
 
 function App() {
+  // eslint-disable-next-line no-unused-vars
   const [authUser, setAuthUser] = useAuth();
   console.log(authUser);
   return (

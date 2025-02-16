@@ -1,5 +1,4 @@
 import express from "express";
-import authenticateJWT from "../controller/userController.js";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 

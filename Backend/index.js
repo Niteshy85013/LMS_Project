@@ -7,6 +7,7 @@ import userRoute from "./route/userRoute.js";
 import bookRoute from "./route/bookRoute.js"
 import categoryRoutes from "./route/categoryRoutes.js";
 import borrowRoute from "./route/borrowRoute.js";
+import returnRoute from "./route/returnRoute.js";
 import path from "path";
 import { fileURLToPath } from 'url';
 import { dirname } from 'path';
@@ -29,18 +30,8 @@ app.use("/api/users",userRoute)
 app.use("/api/categories", categoryRoutes);
 app.use("/api/contacts", contactRoute)
 app.use("/api/borr",borrowRoute)
+app.use("/api/return",returnRoute)
 
-// Middleware to authenticate requests
-const authenticateToken = (req, res, next) => {
-    const token = req.header("Authorization")?.split(" ")[1];
-    if (!token) return res.status(401).json({ error: "Access denied. No token provided." });
-
-    jwt.verify(token, JWT_SECRET, (err, user) => {
-        if (err) return res.status(403).json({ error: "Invalid token" });
-        req.user = user;
-        next();
-    });
-};
 
 app.listen(PORT, () => {
     console.log(`Server is listening on port ${PORT}`);

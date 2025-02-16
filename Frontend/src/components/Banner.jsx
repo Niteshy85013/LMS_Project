@@ -1,3 +1,5 @@
+/* eslint-disable react/no-unescaped-entities */
+// eslint-disable-next-line no-unused-vars
 import React, { useState } from "react";
 import axios from "axios"; // Don't forget to import axios
 import banner from "../../public/Banner.png"; // Ensure the path to your banner image is correct

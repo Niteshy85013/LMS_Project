@@ -1,3 +1,4 @@
+// eslint-disable-next-line no-unused-vars
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import toast from "react-hot-toast";
@@ -8,6 +9,7 @@ const ItemList = () => {
   const [items, setItems] = useState([]);
   const [editItem, setEditItem] = useState(null); // Holds the item being edited
   const [editedName, setEditedName] = useState(""); // Holds the updated name
+  // eslint-disable-next-line no-unused-vars
   const [editedDescription, setEditedDescription] = useState(""); // Holds updated description
 
   useEffect(() => {

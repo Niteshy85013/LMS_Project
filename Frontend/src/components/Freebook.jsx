@@ -1,3 +1,4 @@
+// eslint-disable-next-line no-unused-vars
 import React, { useEffect, useState } from "react";
 import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
@@ -6,6 +7,7 @@ import axios from "axios";
 
 function Freebook() {
   const [books, setBooks] = useState([]);
+  // eslint-disable-next-line no-unused-vars
   const [categories, setCategories] = useState([]);
   const [selectedBook, setSelectedBook] = useState(null);
   const [loading, setLoading] = useState(true);

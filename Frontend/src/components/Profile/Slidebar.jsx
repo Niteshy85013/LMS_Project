@@ -1,10 +1,12 @@
+// eslint-disable-next-line no-unused-vars
 import React from "react";
 
+// eslint-disable-next-line react/prop-types
 const Sidebar = ({ setActiveComponent }) => {
   return (
-    <aside className="w-64 bg-gray-800 text-white p-4">
+    <aside className="w-64 bg-gray-800 text-white p-4 fixed top-0 left-0 h-screen">
       {/* w-64 bg-gray-800 text-white p-4 fixed top-0 left-0 h-full z-10 */}
-      <h2 className="text-xl font-bold mb-4">Menu</h2>
+      <h2 className="text-xl font-bold mb-4">Profile Section</h2>
       <ul>
         <li className="mb-4">
           <button
