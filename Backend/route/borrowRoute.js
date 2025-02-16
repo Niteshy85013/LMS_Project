@@ -5,6 +5,7 @@ const router = express.Router();
 // Borrow Book
 import jwt from "jsonwebtoken";
 
+// Borrow Book
 router.post("/borrow", async (req, res) => {
   try {
     // Extract token from headers
@@ -85,31 +86,35 @@ router.get('/allborrowdata', async (req, res) => {
     }
 });
   
+// Delete a borrowed book
 
-router.delete("/:id", async (req, res) => {
-  const { id } = req.params;
-  console.log("Received ID for deletion:", id); // Debugging step
-
-  if (!id) {
-    return res.status(400).json({ error: "ID is required" });
-  }
-
+router.delete('/:id', async (req, res) => {
   try {
+    console.log('Request Params:', req.params); // Debugging log
+    let { id } = req.params;  // Capture ID from URL
+
+    if (!id) {
+      return res.status(400).json({ error: 'Missing ID parameter' });
+    }
+
+    id = parseInt(id);  // Ensure ID is converted to an integer
+    if (isNaN(id)) {
+      return res.status(400).json({ error: 'Invalid ID format' });
+    }
+
     const result = await pool.query(
-      "DELETE FROM borrowed_books WHERE id = $1 RETURNING *",
+      'DELETE FROM borrowed_books WHERE id = $1 RETURNING *',
       [id]
     );
 
     if (result.rowCount === 0) {
-      console.log("No record found with ID:", id); // Debugging step
-      return res.status(404).json({ error: "Borrowed book not found" });
+      return res.status(404).json({ error: 'Borrowed book not found' });
     }
 
-    console.log("Deleted Borrowed Book:", result.rows[0]); // Debugging step
-    res.status(200).json({ message: "Borrowed book deleted successfully" });
+    res.json({ message: 'Borrowed book deleted successfully' });
   } catch (err) {
-    console.error("Error deleting borrowed book:", err);
-    res.status(500).json({ error: "Failed to delete borrowed book" });
+    console.error('Error deleting borrowed book:', err);
+    res.status(500).json({ error: 'Internal Server Error' });
   }
 });
 

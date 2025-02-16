@@ -10,7 +10,7 @@ import BooksList from "./Admin/BookList";
 import BooksHome from "./components/BooksHome";
 import AdminApp from "./Admin/adminComponents/adminApp";
 import UserBooks from "./userBooks/Home";
-import Profile from "./components/profile";
+import ProfileApp from "./components/Profile/profileApp";
 
 
 
@@ -25,16 +25,16 @@ function App() {
           <Route path="/" element={<Home />} />
           <Route path="/b" element={<BooksHome />} />
           <Route path="/category" element={<CategoryApp/>} />
-          <Route
+          {/* <Route
             path="/course"
             // element={authUser ? <Courses /> : <Navigate to="/signup" />}
             
-          />
+          /> */}
           <Route path="/admin" element={<AdminApp/>} />
           <Route path="/signup" element={<Signup />} />
           <Route path="/books" element={<BooksList/>} />
           <Route path="/userbook" element={ <UserBooks/> } />
-          <Route path="/profile" element={<Profile/>} />
+          <Route path="/profile" element={<ProfileApp/>} />
         </Routes>
         <Toaster />
       </div>

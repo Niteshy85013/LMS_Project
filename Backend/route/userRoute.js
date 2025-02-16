@@ -78,40 +78,36 @@ router.delete("/:id", async (req, res) => {
   }
 });
 
-// Get profile information by user ID
-router.get('/profile/:Id', async (req, res) => {
-  const { Id } = req.params;
+const authenticateToken = (req, res, next) => {
+  const token = req.header("Authorization")?.replace("Bearer ", "");
+
+  if (!token) return res.status(403).json({ error: "Access denied, no token provided." });
 
   try {
-    // Get user information
-    const userQuery = await pool.query('SELECT * FROM users WHERE id = $1', [Id]);
-    if (userQuery.rowCount === 0) {
-      return res.status(404).json({ error: 'User not found' });
-    }
+      const decoded = jwt.verify(token, JWT_SECRET);
+      req.user = decoded; // Set the decoded user information
+      next();
+  } catch (err) {
+      res.status(400).json({ error: "Invalid token." });
+  }
+};
 
-    const user = userQuery.rows[0];
+router.get("/profile", authenticateToken, async (req, res) => {
+  const userId = req.user.id; // Extract user ID from the token
 
-    // Get borrowed books by the user
-    const borrowedBooksQuery = await pool.query(
-      'SELECT b.name as book_name, b.isbn as isbn, bb.borrowed_at FROM borrowed_books AS bb JOIN books AS b ON bb.book_id = b.id WHERE bb.user_id = $1',
-      [Id]
-    );
+  try {
+      const result = await pool.query("SELECT id, username, email FROM users WHERE id = $1", [userId]);
+      
+      if (result.rows.length === 0) {
+          return res.status(404).json({ error: "User not found" });
+      }
 
-    // Send a structured response
-    res.status(200).json({
-      user: {
-        id: user.id,
-        username: user.username,
-        email: user.email, // Include other relevant fields as needed
-      },
-      borrowedBooks: borrowedBooksQuery.rows
-    });
-  } catch (error) {
-    console.error('Error fetching profile:', error);
-    res.status(500).json({ error: 'Internal server error' });
+      res.status(200).json({ userProfile: result.rows[0] });
+  } catch (err) {
+      console.error("Error fetching user profile:", err);
+      res.status(500).json({ error: "Internal Server Error" });
   }
 });
-
 
 
 

@@ -22,17 +22,28 @@ const BorrowedBooks = () => {
         }
     };
 
+    // Handle the delete request
     const handleDelete = async (id) => {
-        if (!window.confirm("Are you sure you want to delete this borrowed book?")) return;
-      
-        try {
-          const response = await axios.delete(`http://localhost:5000/api/borr/${id}`);
-          console.log("Delete response:", response.data); // Debugging step
-        } catch (err) {
-          console.error("Delete error:", err.response?.data || err.message);
+        console.log("Deleting book with ID:", id); // This will help us debug and see if the ID is correct
+
+        if (!id) {
+            console.error("No ID provided to delete");
+            return;
         }
-      };
-      
+
+        if (!window.confirm("Are you sure you want to delete this borrowed book?")) return;
+
+        try {
+            await axios.delete(`http://localhost:5000/api/borr/${id}`);
+            toast.success("Borrowed book deleted successfully!");
+            fetchBorrowedBooks(); // Refresh list after deletion
+        } catch (err) {
+            console.error("Delete error:", err.response?.data || err.message);
+            toast.error("Failed to delete borrowed book.");
+        }
+    };
+
+
     useEffect(() => {
         fetchBorrowedBooks(); // Fetch borrowed books when the component mounts
     }, []);
@@ -50,8 +61,8 @@ const BorrowedBooks = () => {
             ) : borrowedBooks.length === 0 ? (
                 <p className="text-center text-gray-600 mt-10">No Borrowed Books found.</p>
             ) : (
-                <div className="overflow-x-auto bg-white shadow-lg rounded-lg border border-gray-200">
-                    <table className="w-full table-auto text-left">
+                <div className="overflow-x-auto bg-white shadow-md rounded-lg">
+                    <table className="min-w-full table-auto">
                         <thead className="bg-gray-100">
                             <tr>
                                 <th className="px-6 py-3 text-gray-700">Username</th>
@@ -63,24 +74,28 @@ const BorrowedBooks = () => {
                             </tr>
                         </thead>
                         <tbody>
-                            {borrowedBooks.map((book) => (
-                                <tr key={book.id} className="border-b hover:bg-gray-50"> {/* Using book.id for key */}
-                                    <td className="px-6 py-3 text-sm text-gray-800">{book.borrower_username || 'N/A'}</td>
-                                    <td className="px-6 py-3 text-sm text-gray-800">{book.borrower_email || 'N/A'}</td>
-                                    <td className="px-6 py-3 text-sm text-gray-800">{book.book_title || 'N/A'}</td>
-                                    <td className="px-6 py-3 text-sm text-gray-800">{book.book_isbn || 'N/A'}</td>
-                                    <td className="px-6 py-3 text-sm text-gray-800">{book.book_author || 'N/A'}</td>
+                            {borrowedBooks.map((book) => {
+                                console.log("Rendering book:", book); // Debugging step
+                                return (
+                                    <tr key={book.id} className="border-b hover:bg-gray-50">
+                                        <td className="px-6 py-3 text-sm text-gray-800">{book.borrower_username || 'N/A'}</td>
+                                        <td className="px-6 py-3 text-sm text-gray-800">{book.borrower_email || 'N/A'}</td>
+                                        <td className="px-6 py-3 text-sm text-gray-800">{book.book_title || 'N/A'}</td>
+                                        <td className="px-6 py-3 text-sm text-gray-800">{book.book_isbn || 'N/A'}</td>
+                                        <td className="px-6 py-3 text-sm text-gray-800">{book.book_author || 'N/A'}</td>
 
-                                    <td className="px-6 py-3 text-sm text-center">
-                                        <button
-                                            onClick={() => handleDelete(book.id)}
-                                            className="bg-red-500 text-white px-3 py-1 rounded-md hover:bg-red-700"
-                                        >
-                                            Delete
-                                        </button>
-                                    </td>
-                                </tr>
-                            ))}
+                                        <td className="px-6 py-3 text-sm text-center">
+                                            <button
+                                                onClick={() => handleDelete(book.id)} // Make sure book.id is correct here
+                                                className="bg-red-500 text-white px-3 py-1 rounded-md hover:bg-red-700"
+                                            >
+                                                Delete
+                                            </button>
+                                        </td>
+                                    </tr>
+                                );
+                            })}
+
                         </tbody>
                     </table>
                 </div>

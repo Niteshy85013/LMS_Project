@@ -31,11 +31,6 @@ function Freebook() {
     }
   };
 
-  const getCategoryName = (categoryId) => {
-    const category = categories.find((cat) => cat.id === categoryId);
-    return category ? category.name : 'Unknown'; // Fallback if category not found
-  };
-
   const handleView = (book) => setSelectedBook(book);
   const handleCloseView = () => setSelectedBook(null);
 
@@ -71,34 +66,34 @@ function Freebook() {
       {/* Book Details Modal */}
       {selectedBook && (
         <div className="fixed inset-0 flex items-center justify-center bg-gray-700 bg-opacity-50 z-50">
-        <div className="bg-white p-6 rounded-lg shadow-lg max-w-3xl w-full flex flex-col md:flex-row items-center md:items-start">
-          
-          {/* Left Side - Book Details */}
-          <div className="w-full md:w-1/2 p-4">
-            <h2 className="text-2xl font-semibold text-gray-800 mb-4">{selectedBook.name}</h2>
-            <p className="text-gray-700"><strong>ISBN:</strong> {selectedBook.isbn}</p>
-            <p className="text-gray-700"><strong>Author:</strong> {selectedBook.author}</p>
-            <p className="text-gray-700"><strong>Quantity:</strong> {selectedBook.quantity}</p>
-            <p className="text-gray-700 mt-2"><strong>Description:</strong>{selectedBook.description || "No description available"}</p>
-            <button
-              onClick={handleCloseView}
-              className="mt-4 bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-600 transition"
-            >
-              Close
-            </button>
-          </div>
-      
-          {/* Right Side - Book Image */}
-          <div className="w-full md:w-1/2 p-4 flex justify-center">
-            <img
-              src={"/Banner.png"}  // Ensure this path is correct
-              alt={selectedBook.name}
-              className="w-full h-64 object-cover rounded-lg shadow-md"
-            />
+          <div className="bg-white p-6 rounded-lg shadow-lg max-w-3xl w-full flex flex-col md:flex-row items-center md:items-start">
+
+            {/* Left Side - Book Details */}
+            <div className="w-full md:w-1/2 p-4">
+              <h2 className="text-2xl font-semibold text-gray-800 mb-4">{selectedBook.name}</h2>
+              <p className="text-gray-700"><strong>ISBN:</strong> {selectedBook.isbn}</p>
+              <p className="text-gray-700"><strong>Author:</strong> {selectedBook.author}</p>
+              <p className="text-gray-700"><strong>Quantity:</strong> {selectedBook.quantity}</p>
+              <p className="text-gray-700 mt-2"><strong>Description:</strong>{selectedBook.description || "No description available"}</p>
+              <button
+                onClick={handleCloseView}
+                className="mt-4 bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-600 transition"
+              >
+                Close
+              </button>
+            </div>
+
+            {/* Right Side - Book Image */}
+            <div className="w-full md:w-1/2 p-4 flex justify-center">
+              <img
+                src={"/Banner.png"}  // Ensure this path is correct
+                alt={selectedBook.name}
+                className="w-full h-64 object-cover rounded-lg shadow-md"
+              />
+            </div>
           </div>
         </div>
-      </div>
-      
+
       )}
 
       {/* Book Slider */}
@@ -115,7 +110,7 @@ function Freebook() {
                 <div className="mt-4">
                   <h2 className="text-gray-500 text-sm">{book.name}</h2>
                   <p className="text-gray-500 text-sm"><strong>By: </strong> {book.author}</p>
-                  
+
                   <button
                     onClick={() => handleView(book)}
                     className="mt-4 w-full bg-blue-500 text-white py-2 rounded-md hover:bg-blue-600 transition"
