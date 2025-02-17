@@ -1,5 +1,4 @@
 PORT=5000
-# MongoDBURI="mongodb://localhost:27017/bookStore"
 
 API_URL = "http://localhost:5000/api/categories";
 
