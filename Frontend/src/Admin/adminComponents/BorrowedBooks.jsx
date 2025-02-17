@@ -17,7 +17,7 @@ const BorrowedBooks = () => {
             setBorrowedBooks(response.data);
         } catch (error) {
             console.error("Error fetching borrowed books:", error);
-            toast.error("Failed to fetch borrowed books.");
+            toast.error("No borrowed books.");
         } finally {
             setLoading(false);
         }
