@@ -2,7 +2,6 @@
 import React from "react";
 import Home from "./home/Home";
 import { Route, Routes } from "react-router-dom";
-
 import Signup from "./components/Signup";
 import { Toaster } from "react-hot-toast";
 import { useAuth } from "./context/AuthProvider";
@@ -12,9 +11,6 @@ import BooksHome from "./components/BooksHome";
 import AdminApp from "./Admin/adminComponents/adminApp";
 import UserBooks from "./userBooks/Home";
 import ProfileApp from "./components/Profile/profileApp";
-
-
-
 
 function App() {
   // eslint-disable-next-line no-unused-vars

@@ -2,11 +2,12 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import toast from "react-hot-toast";
+import bookss from "../../public/Book2.png";
 const BooksHome = () => {
   const [books, setBooks] = useState([]);
   const [categories, setCategories] = useState([]);
   const [selectedBook, setSelectedBook] = useState(null); // State to hold selected book data
-
+  const [bookData, setBorrowedBooks] = useState(new Set());
   useEffect(() => {
     fetchBooks();
     fetchCategories();
@@ -16,6 +17,8 @@ const BooksHome = () => {
     try {
       const response = await axios.get('http://localhost:5000/api/books');
       setBooks(response.data);
+
+      
     } catch (error) {
       console.error('Error fetching books:', error);
     }
@@ -67,6 +70,7 @@ const BooksHome = () => {
 
       if (response.status === 200) {
         toast.success("Book Borrowed successfully!");
+        setBorrowedBooks((prev) => new Set(prev).add(bookId));
         fetchBooks(); // Refresh books instead of reloading page
       }
     } catch (error) {
@@ -103,7 +107,7 @@ const BooksHome = () => {
               {/* Right Side - Book Image */}
               <div className="w-full md:w-1/2 p-4 flex justify-center">
                 <img
-                  src={"/Banner.png"}  // Ensure this path is correct
+                  src={bookss}  // Ensure this path is correct
                   alt={selectedBook.name}
                   className="w-full h-64 object-cover rounded-lg shadow-md"
                 />
@@ -120,7 +124,12 @@ const BooksHome = () => {
               {/* Book Image (optional, you can add an image field to the book object if needed) */}
               <div className="w-full h-48 bg-gray-200 rounded-lg mb-4">
                 {/* Add book image here if available, for example: */}
-                <img src={"../../public/Banner.png"} className="w-full h-full object-cover rounded-lg" />
+                <img 
+  src={bookss} 
+  alt="Book Image" 
+  className="w-full h-[200px] object-cover rounded-lg"
+/>
+
               </div>
 
               <h3 className="text-xl font-semibold text-gray-800">{book.name}</h3>
@@ -135,18 +144,17 @@ const BooksHome = () => {
                 >
                   View
                 </button>
-
-                {/* Borrow Button */}
                 <button
                   onClick={() => borrowBook(book.id)}
-                  disabled={book.quantity === 0} // Disable if no stock or already borrowed
-                  className={`px-4 py-2 rounded-md transition-colors ${book.quantity === 0
-                    ? "bg-gray-400 cursor-not-allowed"
-                    : "bg-green-500 text-white hover:bg-green-600"
-                    }`}
+                  disabled={bookData.has(book.id) || book.quantity === 0}
+                  className={`px-3 py-1 rounded ${bookData.has(book.id) || book.quantity === 0
+                      ? "bg-gray-400 cursor-not-allowed"
+                      : "bg-blue-500 hover:bg-blue-600"
+                    } text-white`}
                 >
-                  Borrow
+                  {bookData.has(book.id) ? "Borrowed" : "Borrow"}
                 </button>
+                
               </div>
             </div>
           ))}

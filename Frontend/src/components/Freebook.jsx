@@ -88,7 +88,7 @@ function Freebook() {
             {/* Right Side - Book Image */}
             <div className="w-full md:w-1/2 p-4 flex justify-center">
               <img
-                src={"/Banner.png"}  // Ensure this path is correct
+                src={"/Book.png"}  // Ensure this path is correct
                 alt={selectedBook.name}
                 className="w-full h-64 object-cover rounded-lg shadow-md"
               />
