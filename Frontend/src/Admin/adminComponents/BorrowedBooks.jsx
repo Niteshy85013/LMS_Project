@@ -7,6 +7,8 @@ import { FaTrash } from "react-icons/fa"; // Trash icon from react-icons
 const BorrowedBooks = () => {
     const [borrowedBooks, setBorrowedBooks] = useState([]);
     const [loading, setLoading] = useState(false);
+    const [userId, setUserId] = useState("");
+    const [bookId, setBookId] = useState("");
 
     // Fetch all borrowed books
     const fetchBorrowedBooks = async () => {
@@ -24,32 +26,33 @@ const BorrowedBooks = () => {
     };
 
     // Handle the delete request
-    const handleDelete = async (id) => {
-        console.log("Deleting book with ID:", id);
-
-        if (!id) {
-            console.error("No ID provided to delete");
+    const handleDelete = async (borrowId) => {
+        if (!borrowId) {
+            console.error("Error: borrowId is undefined");
             return;
         }
-
-        if (!window.confirm("Are you sure you want to delete this borrowed book?")) return;
-
+    
+        console.log(`Sending DELETE request for borrowId: ${borrowId}`);
+    
         try {
-            await axios.delete(`http://localhost:5000/api/borr/${id}`);
-            toast.success("Borrowed book deleted successfully!");
-            fetchBorrowedBooks();
-        } catch (err) {
-            console.error("Delete error:", err.response?.data || err.message);
-            toast.error("Failed to delete borrowed book.");
+            const response = await axios.delete(`http://localhost:5000/api/borr/borrowed-books/${borrowId}`);
+            console.log("Delete response:", response);
+            setBorrowedBooks(borrowedBooks.filter(book => book.id !== borrowId)); // Remove book from UI
+            toast.success('Borrowed book deleted successfully!');
+        } catch (error) {
+            console.error('Error deleting borrowed book:', error);
+            toast.error('Failed to delete borrowed book');
         }
     };
+    
+    
 
     useEffect(() => {
         fetchBorrowedBooks();
     }, []);
 
     return (
-        <div className="max-w-5xl mx-auto mt-10 p-6 bg-white shadow-lg rounded-lg">
+        <div className="max-w-5xl mx-auto mt-10 p-10 bg-white shadow-lg rounded-lg">
             <h2 className="text-3xl font-semibold mb-6 text-center text-gray-800">📚 Borrowed Books</h2>
 
             {loading ? (
@@ -87,7 +90,7 @@ const BorrowedBooks = () => {
 
                                     <td className="px-4 py-3 text-center">
                                         <button
-                                            onClick={() => handleDelete(book.id)}
+                                            onClick={() => handleDelete(book.id)}  // ✅ Corrected here
                                             className="bg-red-500 text-white p-2 rounded-md hover:bg-red-600 transition-colors"
                                         >
                                             <FaTrash className="w-4 h-4" />

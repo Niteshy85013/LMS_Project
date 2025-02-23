@@ -86,37 +86,33 @@ router.get('/allborrowdata', async (req, res) => {
     }
 });
   
-// Delete a borrowed book
 
-router.delete('/:id', async (req, res) => {
+// Delete a borrowed book by borrowId
+router.delete("/borrowed-books/:borrowId", async (req, res) => {
+  const { borrowId } = req.params;
+  console.log("Received borrowId:", borrowId);  // Log borrowId to confirm it's correct
+
+  if (!borrowId || isNaN(borrowId)) {
+      return res.status(400).json({ error: 'Invalid borrowId' });
+  }
+
   try {
-    console.log('Request Params:', req.params); // Debugging log
-    let { id } = req.params;  // Capture ID from URL
+      // Delete the borrowed book
+      const deleteResult = await pool.query("DELETE FROM borrowed_books WHERE id = $1 RETURNING *", [borrowId]);
+      if (deleteResult.rowCount === 0) {
+          return res.status(404).json({ error: "Borrowed book not found" });
+      }
 
-    if (!id) {
-      return res.status(400).json({ error: 'Missing ID parameter' });
-    }
-
-    id = parseInt(id);  // Ensure ID is converted to an integer
-    if (isNaN(id)) {
-      return res.status(400).json({ error: 'Invalid ID format' });
-    }
-
-    const result = await pool.query(
-      'DELETE FROM borrowed_books WHERE id = $1 RETURNING *',
-      [id]
-    );
-
-    if (result.rowCount === 0) {
-      return res.status(404).json({ error: 'Borrowed book not found' });
-    }
-
-    res.json({ message: 'Borrowed book deleted successfully' });
-  } catch (err) {
-    console.error('Error deleting borrowed book:', err);
-    res.status(500).json({ error: 'Internal Server Error' });
+      res.json({ message: "Borrowed book deleted successfully!" });
+  } catch (error) {
+      console.error("Error deleting borrowed book:", error);
+      res.status(500).json({ error: "Server error" });
   }
 });
+
+
+
+
 
 
   router.get("/borrowed-books", authenticateJWT, async (req, res) => {
