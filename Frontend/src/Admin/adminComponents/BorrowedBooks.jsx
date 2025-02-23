@@ -7,8 +7,7 @@ import { FaTrash } from "react-icons/fa"; // Trash icon from react-icons
 const BorrowedBooks = () => {
     const [borrowedBooks, setBorrowedBooks] = useState([]);
     const [loading, setLoading] = useState(false);
-    const [userId, setUserId] = useState("");
-    const [bookId, setBookId] = useState("");
+
 
     // Fetch all borrowed books
     const fetchBorrowedBooks = async () => {
@@ -31,9 +30,9 @@ const BorrowedBooks = () => {
             console.error("Error: borrowId is undefined");
             return;
         }
-    
+
         console.log(`Sending DELETE request for borrowId: ${borrowId}`);
-    
+
         try {
             const response = await axios.delete(`http://localhost:5000/api/borr/borrowed-books/${borrowId}`);
             console.log("Delete response:", response);
@@ -44,9 +43,6 @@ const BorrowedBooks = () => {
             toast.error('Failed to delete borrowed book');
         }
     };
-    
-    
-
     useEffect(() => {
         fetchBorrowedBooks();
     }, []);
@@ -73,7 +69,7 @@ const BorrowedBooks = () => {
                                 <th className="px-4 py-3 text-left">Book Title</th>
                                 <th className="px-4 py-3 text-left">Book ISBN</th>
                                 <th className="px-4 py-3 text-left">Book Author</th>
-                                <th className="px-4 py-3 text-center">Action</th>
+                                {/* <th className="px-4 py-3 text-center">Action</th> */}
                             </tr>
                         </thead>
                         <tbody>
@@ -88,14 +84,14 @@ const BorrowedBooks = () => {
                                     <td className="px-4 py-3 text-gray-800">{book.book_isbn || "N/A"}</td>
                                     <td className="px-4 py-3 text-gray-800">{book.book_author || "N/A"}</td>
 
-                                    <td className="px-4 py-3 text-center">
+                                    {/* <td className="px-4 py-3 text-center">
                                         <button
                                             onClick={() => handleDelete(book.id)}  // ✅ Corrected here
                                             className="bg-red-500 text-white p-2 rounded-md hover:bg-red-600 transition-colors"
                                         >
                                             <FaTrash className="w-4 h-4" />
                                         </button>
-                                    </td>
+                                    </td> */}
                                 </tr>
                             ))}
                         </tbody>
